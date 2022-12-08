@@ -6,6 +6,6 @@ body{
 }
 .game{
     border: 1px black solid;
-    width: 50%;
-    height: 90%;
+    width: 400px;
+    height: 600px;
 }
