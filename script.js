@@ -1,36 +1,54 @@
 const run_state=0;
-
+const Tick=150;
+const scaleSnake=20;
 // características de juego
 let state={
     canvas: null,
     ctx:null,
-    snake: [{x:30,y:40}],
+    snake: [{x:3,y:4}],
     direction:{x:1,y:0},
     prey:{x:60, y:100},
     growing: 0,
     runState: run_state,
 }
+const directionMap={
+    'a':[-1,0],
+    'd':[1,0],
+    'w':[0,-1],
+    's':[0,1]
+}
 function drawPixel(color,x,y){    
     state.ctx.fillStyle=color;
-    state.ctx.fillRect(10,10,x,y);
+    state.ctx.fillRect(scaleSnake*x,scaleSnake*y,scaleSnake,scaleSnake);
 }
 function draw(){
     state.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-    drawPixel('green',30,10)
-    drawPixel('red',20,10);
-    drawPixel('yellow',10,10);
+    const {x,y}=state.snake[0]
+    drawPixel('yellow',x,y);
 }
 function tick(){
+    const interval=Tick;
+    const dx=state.direction.x;
+    const dy=state.direction.y;
+    const sq=state.snake[0]
+    sq.x=sq.x+dx;
+    sq.y+=dy;
     requestAnimationFrame(draw)
+    setTimeout(tick,interval)
 }
 // interacción con el teclado
 window.onload=function(){
     state.canvas=document.getElementById('game');
     state.ctx=state.canvas.getContext('2d');
-    state.canvas.width=window.innerWidth;
-    state.canvas.height=window.innerHeight;
     window.onkeydown=function(e){
-        console.log(e.key);
+        const direction=directionMap[e.key]
+        if(direction){
+            const [x,y]=direction
+            if(x!==state.direction.x && y!==state.direction.y){
+                state.direction.x=x;
+                state.direction.y=y;
+            }
+        }
     }
     tick()
 }
