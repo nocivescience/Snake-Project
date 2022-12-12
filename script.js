@@ -23,10 +23,10 @@ function drawPixel(color, x, y) {
 }
 function draw() {
   state.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-  for(let i=0;i<state.snake.length;i++){
+  for(let i=0; i<state.snake.length;i++){
       const { x, y } = state.snake[i];
       drawPixel("yellow", x, y);
-}
+  }
 }
 function collision() {
   const head = state.snake[0];
@@ -44,22 +44,21 @@ function tick() {
   const interval = Tick;
   const dx = state.direction.x;
   const dy = state.direction.y;
-  const sq = state.snake[0];
-  const tail = {};
-  Object.assign(tail, state.snake[state.snake.length - 1]);
+  let tail={};
+  Object.assign(tail,state.snake[state.snake.length-1])
+  for(let i=state.snake.length-1;i>-1;i--){
+      const sq=state.snake[i];
+      if(i===0){
+          sq.x += dx;
+          sq.y += dy;
+      }else{
+        sq.x=state.snake[i-1].x;
+        sq.y=state.snake[i-1].y;
+      }
+  }
   if(state.growing>0){
     state.snake.push(tail);
-    state.growing-=1
-  }
-  for( let i=state.snake.length-1;i>-1;i--){
-    const sq=state.snake[i]
-    if(i===0){
-        sq.x += dx;
-        sq.y += dy;
-    }else{
-        sq.x=state.snake[i-1].x;
-        sq.y=state.snake[i-1].y
-    }
+    state.growing=0;
   }
   if (collision()) {
     alert("te has salido de los límites");
@@ -80,7 +79,7 @@ window.onload = function () {
         state.direction.y = y;
       }
     }
-    if (e.key === "t") {
+    if(e.key==='p'){
         state.growing++;
     }
   };
