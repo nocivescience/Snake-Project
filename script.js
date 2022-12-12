@@ -26,6 +26,13 @@ function draw(){
     const {x,y}=state.snake[0]
     drawPixel('yellow',x,y);
 }
+function collision(){
+    const head=state.snake[0]
+    if(head.x*scaleSnake<0||head.x*scaleSnake>=state.canvas.width|| head.y*scaleSnake<0||head.y*scaleSnake>=state.canvas.height){
+        return true
+    }
+    return false
+}
 function tick(){
     const interval=Tick;
     const dx=state.direction.x;
@@ -33,6 +40,9 @@ function tick(){
     const sq=state.snake[0]
     sq.x=sq.x+dx;
     sq.y+=dy;
+    if(collision()){
+        alert('te has salido de los límites')
+    }
     requestAnimationFrame(draw)
     setTimeout(tick,interval)
 }
