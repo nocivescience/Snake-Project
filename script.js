@@ -9,19 +9,18 @@ let state = {
   ctx: null,
   snake: [{ x: 3, y: 4 }],
   direction: { x: 1, y: 0 },
-  prey: { x: 60, y: 100 },
+  prey: { x: 6, y: 2 },
   growing: 0,
   runState: run_state,
 };
 function randomXY(){
   return {
-    x:Math.floor(Math.random()*6),
-    y:Math.floor(Math.random()*6)
+    x:Math.floor(Math.random()*30),
+    y:Math.floor(Math.random()*25)
   }
 }
-function createApple(){
-  const {x,y}=state.prey
-  state.ctx.drawImage(apple,x,y)
+function createApple(x,y){
+  state.ctx.drawImage(apple,x*scaleSnake,y*scaleSnake)
 }
 const directionMap = {
   a: [-1, 0],
@@ -41,7 +40,8 @@ function draw() {
       const { x, y } = state.snake[i];
       drawPixel("yellow", x, y);
   }
-  createApple()
+  const {x,y}=state.prey;
+  createApple(x,y)
 }
 function collision() {
   const head = state.snake[0];
@@ -92,7 +92,6 @@ function tick() {
 window.onload = function () {
   state.canvas = document.getElementById("game");
   state.ctx = state.canvas.getContext("2d");
-
   const  {x,y}=randomXY()
   window.onkeydown = function (e) {
     const direction = directionMap[e.key];
