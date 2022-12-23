@@ -1,6 +1,8 @@
 const run_state = 0;
 const Tick = 150;
 const scaleSnake = 20;
+const apple= new Image();
+apple.src='apple.png';
 // características de juego
 let state = {
   canvas: null,
@@ -11,6 +13,16 @@ let state = {
   growing: 0,
   runState: run_state,
 };
+function randomXY(){
+  return {
+    x:Math.floor(Math.random()*6),
+    y:Math.floor(Math.random()*6)
+  }
+}
+function createApple(){
+  const {x,y}=state.prey
+  state.ctx.drawImage(apple,x,y)
+}
 const directionMap = {
   a: [-1, 0],
   d: [1, 0],
@@ -20,6 +32,8 @@ const directionMap = {
 function drawPixel(color, x, y) {
   state.ctx.fillStyle = color;
   state.ctx.fillRect(scaleSnake * x, scaleSnake * y, scaleSnake, scaleSnake);
+  state.ctx.shadowBlur=20;
+  state.ctx.shadowColor='black';
 }
 function draw() {
   state.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -27,6 +41,7 @@ function draw() {
       const { x, y } = state.snake[i];
       drawPixel("yellow", x, y);
   }
+  createApple()
 }
 function collision() {
   const head = state.snake[0];
@@ -44,6 +59,9 @@ function tick() {
   const interval = Tick;
   const dx = state.direction.x;
   const dy = state.direction.y;
+  const didScore=(
+    state.snake[0].x===state.prey.x&&state.snake[0].y===state.prey.y
+  )
   let tail={};
   Object.assign(tail,state.snake[state.snake.length-1])
   for(let i=state.snake.length-1;i>-1;i--){
@@ -55,13 +73,17 @@ function tick() {
         sq.x=state.snake[i-1].x;
         sq.y=state.snake[i-1].y;
       }
-  }
+    }
+    if(didScore){
+      // state.growing+=scaleSnake;
+      state.prey=randomXY()
+    }
   if(state.growing>0){
     state.snake.push(tail);
     state.growing=0;
   }
   if (collision()) {
-    alert("te has salido de los límites");
+    return 
   }
   requestAnimationFrame(draw);
   setTimeout(tick, interval);
@@ -70,6 +92,8 @@ function tick() {
 window.onload = function () {
   state.canvas = document.getElementById("game");
   state.ctx = state.canvas.getContext("2d");
+
+  const  {x,y}=randomXY()
   window.onkeydown = function (e) {
     const direction = directionMap[e.key];
     if (direction) {
